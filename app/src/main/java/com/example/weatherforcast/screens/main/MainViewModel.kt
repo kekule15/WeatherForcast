@@ -15,26 +15,30 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: WeatherRepository) : ViewModel() {
 
-    val data: MutableState<DataOrException<WeatherModel, Boolean, java.lang.Exception>> =
-        mutableStateOf(
-            DataOrException(null, true, java.lang.Exception(""))
-        )
-
-    init {
-        loaderWeather()
+    suspend fun getWeatherData(city: String): DataOrException<WeatherModel, Boolean, java.lang.Exception> {
+        return repository.getWeather(cityQuery = city)
     }
 
-    private fun loaderWeather() {
-        getWeather("cityStore")
-    }
-
-    private fun getWeather(query: String) {
-        viewModelScope.launch {
-            if (query.isEmpty())return@launch
-            data.value.loading = true
-            data.value = repository.getWeather(query)
-            if (data.value.data.toString().isNotEmpty()) data.value.loading = false
-        }
-        Log.d("TAG", "getWeather: ${data.value.data}")
-    }
+//    val data: MutableState<DataOrException<WeatherModel, Boolean, java.lang.Exception>> =
+//        mutableStateOf(
+//            DataOrException(null, true, java.lang.Exception(""))
+//        )
+//
+//    init {
+//        loaderWeather()
+//    }
+//
+//    private fun loaderWeather() {
+//        getWeather("seattle")
+//    }
+//
+//    private fun getWeather(query: String) {
+//        viewModelScope.launch {
+//            if (query.isEmpty())return@launch
+//            data.value.loading = true
+//            data.value = repository.getWeather(query)
+//            if (data.value.data.toString().isNotEmpty()) data.value.loading = false
+//        }
+//        Log.d("TAG", "getWeather: ${data.value.data}")
+//    }
 }

@@ -7,7 +7,7 @@ data class WeatherItem (
     val feels_like: FeelsLike,
     val gust: Double,
     val humidity: Int,
-    val pop: Int,
+    val pop: Double,
     val pressure: Int,
     val speed: Double,
     val sunrise: Int,

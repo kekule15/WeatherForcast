@@ -5,7 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.weatherforcast.screens.MainScreen
+import com.example.weatherforcast.screens.main.MainScreen
 import com.example.weatherforcast.screens.WeatherSplashScreen
 import com.example.weatherforcast.screens.main.MainViewModel
 
