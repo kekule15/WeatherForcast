@@ -2,6 +2,7 @@ package com.example.weatherforcast.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.weatherforcast.data.SettingsDao
 import com.example.weatherforcast.data.WeatherDao
 import com.example.weatherforcast.data.WeatherDatabase
 import com.example.weatherforcast.network.WeatherAPI
@@ -19,17 +20,25 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
-    @Provides
-    @Singleton
-    fun providesWeatherDao(weatherDatabase: WeatherDatabase): WeatherDao = weatherDatabase.weatherDao()
 
     @Provides
     @Singleton
-    fun providesWeatherDatabase(@ApplicationContext context: Context): WeatherDatabase = Room.databaseBuilder(
-        context = context,
-        WeatherDatabase::class.java,
-        "weather_database"
-    ).fallbackToDestructiveMigration().build()
+    fun providesSettingDao(weatherDatabase: WeatherDatabase): SettingsDao =
+        weatherDatabase.settingsDao()
+
+    @Provides
+    @Singleton
+    fun providesWeatherDao(weatherDatabase: WeatherDatabase): WeatherDao =
+        weatherDatabase.weatherDao()
+
+    @Provides
+    @Singleton
+    fun providesWeatherDatabase(@ApplicationContext context: Context): WeatherDatabase =
+        Room.databaseBuilder(
+            context = context,
+            WeatherDatabase::class.java,
+            "weather_database"
+        ).fallbackToDestructiveMigration().build()
 
     @Provides
     @Singleton
