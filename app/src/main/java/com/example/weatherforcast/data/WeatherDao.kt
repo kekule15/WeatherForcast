@@ -18,7 +18,7 @@ interface WeatherDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateFavourite(favourite: FavouriteModel)
 
-    @Query(value = "DELETE * from fav_tbl")
+    @Query(value = "DELETE from fav_tbl")
     suspend fun deleteAll()
 
     @Delete

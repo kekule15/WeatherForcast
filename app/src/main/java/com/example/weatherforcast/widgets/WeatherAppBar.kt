@@ -1,26 +1,30 @@
 package com.example.weatherforcast.widgets
 
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.weatherforcast.model.FavouriteModel
 import com.example.weatherforcast.navigation.WeatherScreens
+import com.example.weatherforcast.screens.main.favourite.FavouriteViewModel
 
 //@Preview
 @Composable
@@ -30,6 +34,7 @@ fun WeatherAppBar(
     isMainScreen: Boolean = true,
     elevation: Dp = 0.dp,
     navController: NavController,
+    favouriteViewModel: FavouriteViewModel = hiltViewModel(),
     onAddActionClicked: () -> Unit = {},
     onButtonClicked: () -> Unit = {},
 ) {
@@ -39,6 +44,7 @@ fun WeatherAppBar(
     if (showDialog.value) {
         ShowSettingDropDownMenu(showDialog = showDialog, navController = navController)
     }
+    var context = LocalContext.current
     TopAppBar(
         title = {
             Text(
@@ -63,7 +69,72 @@ fun WeatherAppBar(
                 Icon(imageVector = icon, contentDescription = null, modifier = Modifier.clickable {
                     onButtonClicked.invoke()
                 })
-            } else Box {}
+            }
+            if (isMainScreen) {
+                var dataList = title.split(",")
+                var isAlreadyFavList =
+                    favouriteViewModel.favList.collectAsState().value.filter { item -> item.city == dataList[0] }
+                if (isAlreadyFavList.isNullOrEmpty()) {
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = "Favourite Icon",
+                        modifier = Modifier
+                            .padding(start = 6.dp)
+                            .scale(0.9f)
+                            .clickable {
+
+                                favouriteViewModel
+                                    .addFavourite(
+                                        FavouriteModel(
+                                            city = dataList[0],
+                                            country = dataList[1]
+                                        )
+                                    )
+                                    .run {
+                                        Toast
+                                            .makeText(
+                                                context,
+                                                "Added to Favourite List",
+                                                Toast.LENGTH_LONG
+                                            )
+                                            .show()
+
+                                    }
+                            },
+                        tint = Color.Red.copy(alpha = 0.6f)
+
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Favourite Icon",
+                        modifier = Modifier
+                            .padding(start = 6.dp)
+                            .scale(0.9f)
+                            .clickable {
+                                favouriteViewModel
+                                    .deleteOneFavourite(
+                                        FavouriteModel(
+                                            city = dataList[0],
+                                            country = dataList[1]
+                                        )
+                                    )
+                                    .run {
+                                        Toast
+                                            .makeText(
+                                                context,
+                                                "City removed from Favourite List",
+                                                Toast.LENGTH_LONG
+                                            )
+                                            .show()
+
+                                    }
+                            },
+                        tint = Color.Red.copy(alpha = 0.6f)
+
+                    )
+                }
+            }
         },
         elevation = elevation
     )
